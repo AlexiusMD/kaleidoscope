@@ -86,6 +86,8 @@ static int gettok() {
 // Abstract Syntax Tree (aka Parse Tree)
 //===----------------------------------------------------------------------===//
 
+namespace {
+
 // ExprAST - Base class for all expression nodes.
 class ExprAST {
 public:
@@ -154,6 +156,12 @@ public:
         : Proto(std::move(Proto)), Body(std::move(Body)) {}
 };
 
+} // end anonymous namespace
+
+//===----------------------------------------------------------------------===//
+// Parser
+//===----------------------------------------------------------------------===//
+
 // CurTok/getNextToken - Provide a simple token buffer. CurTok is the current
 // token the parser is looking at. getNextToken reads another token from the
 // lexer and updates CurTok with its results.
@@ -171,6 +179,9 @@ std::unique_ptr<PrototypeAST> LogErrorP(const char *Str) {
     LogError(Str);
     return nullptr;
 }
+
+static std::unique_ptr<ExprAST> ParseExpression();
+static std::unique_ptr<ExprAST> ParseBinOpRHS(int ExprPrec, std::unique_ptr<ExprAST> LHS); 
 
 // numberexpr ::= number
 static std::unique_ptr<ExprAST> ParseNumberExpr() {
